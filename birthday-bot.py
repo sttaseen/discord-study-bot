@@ -18,8 +18,8 @@ async def on_ready():
         print("Channel not found!")
 
     # Schedule the job to check for tomorrow's birthdays
-    # schedule.every().day.at("23:50").do(lambda: asyncio.create_task(check_tomorrows_birthdays()))
-    schedule.every().day.at("12:06").do(lambda: asyncio.create_task(check_tomorrows_birthdays()))
+    schedule.every().day.at("23:50").do(lambda: asyncio.create_task(check_tomorrows_birthdays()))
+
     run_schedule.start()
 
 @bot.command(name='addbday')
