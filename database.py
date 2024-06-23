@@ -25,22 +25,32 @@ def add_birthday(user_id, name, month, day):
     conn.commit()
     conn.close()
 
-def get_birthday(user_id):
+def get_birthday(user_id, name=None):
     conn = sqlite3.connect('birthdays.db')
     cursor = conn.cursor()
-    cursor.execute('''
-    SELECT month, day FROM birthdays WHERE user_id = ?
-    ''', (user_id,))
+    if user_id:
+        cursor.execute('''
+        SELECT month, day FROM birthdays WHERE user_id = ?
+        ''', (user_id,))
+    else:
+        cursor.execute('''
+        SELECT month, day FROM birthdays WHERE name = ?
+        ''', (name,))
     result = cursor.fetchone()
     conn.close()
     return result if result else None
 
-def delete_birthday(user_id):
+def delete_birthday(user_id, name=None):
     conn = sqlite3.connect('birthdays.db')
     cursor = conn.cursor()
-    cursor.execute('''
-    DELETE FROM birthdays WHERE user_id = ?
-    ''', (user_id,))
+    if user_id:
+        cursor.execute('''
+        DELETE FROM birthdays WHERE user_id = ?
+        ''', (user_id,))
+    else:
+        cursor.execute('''
+        DELETE FROM birthdays WHERE name = ?
+        ''', (name,))
     conn.commit()
     conn.close()
 
@@ -63,11 +73,21 @@ def get_birthdays_today():
     conn = sqlite3.connect('birthdays.db')
     cursor = conn.cursor()
     cursor.execute('''
-    SELECT user_id FROM birthdays WHERE month = ? AND day = ?
+    SELECT user_id, name FROM birthdays WHERE month = ? AND day = ?
     ''', (today.month, today.day))
     result = cursor.fetchall()
     conn.close()
-    return [row[0] for row in result]
+    return [(row[0], row[1]) for row in result]
 
-# Create the table if it doesn't exist
+def get_birthdays_by_date(month, day):
+    conn = sqlite3.connect('birthdays.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+    SELECT user_id, name FROM birthdays WHERE month = ? AND day = ?
+    ''', (month, day))
+    result = cursor.fetchall()
+    conn.close()
+    return [(row[0], row[1]) for row in result]
+
+
 create_table()
